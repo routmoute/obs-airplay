@@ -21,6 +21,8 @@ jobs:
           sudo ./deploy.sh
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: build
         run: coddle
       - name: Upload Artifact
