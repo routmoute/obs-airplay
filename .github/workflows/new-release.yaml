@@ -11,6 +11,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-13, macos-latest]
     steps:
+      - name: Fix macos-13 brew error
+        run: rm /usr/local/bin/idle3 || true
+        if: ${{ matrix.os ==  macos-13 }}
+
       - name: Install dependencies
         uses: ConorMacBride/install-package@v1
         with:
