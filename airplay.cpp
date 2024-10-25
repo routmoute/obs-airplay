@@ -158,7 +158,7 @@ auto AirPlay::start_raop_server(std::vector<char> hw_addr,
   raop_cbs.audio_set_metadata = audio_set_metadata;
 
   /* set max number of connections = 2 */
-  raop = raop_init(2, &raop_cbs);
+  raop = raop_init(&raop_cbs);
   if (raop == NULL)
   {
     LOG("Error initializing raop!");
@@ -267,7 +267,7 @@ auto AirPlay::audio_process(void *cls, raop_ntp_t * /*ntp*/, audio_decode_struct
   self->render(data);
 }
 
-auto AirPlay::video_process(void *cls, raop_ntp_t * /*ntp*/, h264_decode_struct *data) -> void
+auto AirPlay::video_process(void *cls, raop_ntp_t * /*ntp*/, video_decode_struct *data) -> void
 {
   auto self = static_cast<AirPlay *>(cls);
   self->render(data);
@@ -457,7 +457,7 @@ AirPlay::AirPlay(struct obs_data *obsData, struct obs_source *obsSource)
   compression_type = 0;
 }
 
-auto AirPlay::render(const h264_decode_struct *pkt) -> void
+auto AirPlay::render(const video_decode_struct *pkt) -> void
 {
   if (!obsSource)
     return;
