@@ -41,7 +41,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: coddle-cpp/coddle
-      - run: ls -la && pwd
       - name: Build and Install coddle
         run: ./build.sh && sudo ./deploy.sh
       - name: Checkout OBS repository
@@ -53,7 +52,6 @@ jobs:
         with:
           submodules: true
           path: obs-airplay
-      - run: ls -la && pwd && cd obs-airplay
       - name: Build obs-airplay plugin
         run: coddle
       - name: Upload Artifact
