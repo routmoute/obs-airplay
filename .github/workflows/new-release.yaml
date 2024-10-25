@@ -5,39 +5,22 @@ on:
       - main
       - 'releases/**'
 jobs:
-#  build-linux:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Install dependencies
-#        uses: gerlero/apt-install@v1
-#        with:
-#          packages: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev
-#          cache: false
-#      - name: Checkout Coddle repository
-#        uses: actions/checkout@v4
-#        with:
-#          repository: coddle-cpp/coddle
-#      - name: Build and Install coddle
-#        run: ./build.sh && sudo ./deploy.sh
-#      - name: Checkout this repository
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: Build obs-airplay plugin
-#        run: coddle
-#      - name: Upload Artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: obs-airplay_${{ runner.os }}-${{ runner.arch }}
-#          path: obs-airplay.so
-  build-macos:
-    runs-on: macos-latest
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       - name: Install dependencies
         uses: ConorMacBride/install-package@v1
         with:
+          # Linux
+          apt: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev
+          # MacOS
           brew: fdk-aac ffmpeg libplist openssl
           brew-cask: obs
+
+      # All OS
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
@@ -45,15 +28,21 @@ jobs:
           path: coddle
       - name: Build and Install coddle
         run: cd coddle && ./build.sh && sudo ./deploy.sh
+
+      # MacOS Only
       - name: Get Installed OBS Version
-        id: obs-version
+        id: obs-mac-version
         run: echo "version=$(curl -s https://formulae.brew.sh/api/cask/obs.json | jq -r .version)" >> $GITHUB_OUTPUT
+        if: ${{ runner.os == 'macOS' }}
       - name: Checkout OBS repository
         uses: actions/checkout@v4
         with:
           repository: obsproject/obs-studio
-          ref: ${{ steps.obs-version.outputs.version }}
+          ref: ${{ steps.obs-mac-version.outputs.version }}
           path: obs-studio
+        if: ${{ runner.os == 'macOS' }}
+
+      # All OS
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
@@ -61,8 +50,25 @@ jobs:
           path: obs-airplay
       - name: Build obs-airplay plugin
         run: cd obs-airplay && coddle
-      - name: Upload Artifact
+
+      # MacOS
+      - name: Upload MacOS Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: obs-airplay_OBS-${{ steps.obs-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
+          name: obs-airplay_OBS-${{ steps.obs-mac-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
           path: obs-airplay/resources/macos/obs-airplay.plugin
+        if: ${{ runner.os == 'macOS' }}
+
+      # Linux
+      - name: Get Installed OBS Version
+        id: obs-linux-version
+        uses: dangmai/get-apt-package-version@v1
+        with:
+          package: libobs-dev
+        if: ${{ runner.os == 'Linux' }}
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obs-airplay_OBS-${{ steps.obs-linux-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
+          path: obs-airplay.so
+        if: ${{ runner.os == 'Linux' }}
