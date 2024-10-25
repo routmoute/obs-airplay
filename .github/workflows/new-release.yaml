@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         uses: ConorMacBride/install-package@v1
         with:
-          brew: fdk-aac ffmpeg libplist openssl
+          brew: fdk-aac ffmpeg libplist openssl obs
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
