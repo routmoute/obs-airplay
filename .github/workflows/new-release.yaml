@@ -5,20 +5,48 @@ on:
       - main
       - 'releases/**'
 jobs:
-  build-linux:
-    runs-on: ubuntu-22.04
+#  build-linux:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Install dependencies
+#        uses: gerlero/apt-install@v1
+#        with:
+#          packages: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev
+#          cache: false
+#      - name: Checkout Coddle repository
+#        uses: actions/checkout@v4
+#        with:
+#          repository: coddle-cpp/coddle
+#      - name: build and install coddle
+#        run: ./build.sh && sudo ./deploy.sh
+#      - name: Checkout this repository
+#        uses: actions/checkout@v4
+#        with:
+#          submodules: true
+#      - name: Build obs-airplay plugin
+#        run: coddle
+#      - name: Upload Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: obs-airplay_${{ runner.os }}-${{ runner.arch }}
+#          path: obs-airplay.so
+  build-macos:
+    runs-on: macos-latest
     steps:
-      - name: Install requirements
-        uses: gerlero/apt-install@v1
+      - name: Install dependencies
+        uses: ConorMacBride/install-package@v1
         with:
-          packages: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev
-          cache: false
+          brew: fdk-aac ffmpeg libplist openssl
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
           repository: coddle-cpp/coddle
       - name: build and install coddle
         run: ./build.sh && sudo ./deploy.sh
+      - name: Checkout OBS repository
+        uses: actions/checkout@v4
+        with:
+          repository: cobsproject/obs-studio
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
@@ -29,4 +57,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: obs-airplay_${{ runner.os }}-${{ runner.arch }}
-          path: obs-airplay.so
+          path: resources/macos/obs-airplay.plugin
