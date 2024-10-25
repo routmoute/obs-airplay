@@ -8,25 +8,25 @@ jobs:
   build-linux:
     runs-on: ubuntu-22.04
     steps:
-      - name: install apt requirements
+      - name: Install requirements
         uses: gerlero/apt-install@v1
         with:
           packages: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev
           cache: false
-      - name: install coddle
-        run: |
-          git clone https://github.com/coddle-cpp/coddle.git
-          cd coddle
-          ./build.sh
-          sudo ./deploy.sh
-      - name: Checkout repository
+      - name: Checkout Coddle repository
+        uses: actions/checkout@v4
+        with:
+          repository: coddle-cpp/coddle
+      - name: build and install coddle
+        run: ./build.sh && sudo ./deploy.sh
+      - name: Checkout this repository
         uses: actions/checkout@v4
         with:
           submodules: true
-      - name: build
+      - name: Build obs-airplay plugin
         run: coddle
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Linux-x86_64
+          name: obs-airplay_${{ RUNNER_OS }}-${{ RUNNER_ARCH }}
           path: obs-airplay.so
