@@ -24,8 +24,6 @@ jobs:
           # MacOS
           brew: fdk-aac ffmpeg libplist openssl
           brew-cask: obs
-          # Windows
-#          choco: msys2
 
       # All OS
       - name: Checkout Coddle repository
@@ -94,6 +92,9 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
 
       # Windows
-      - name: test
-        run: dir
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obs-airplay_${{ runner.os }}-${{ runner.arch }}
+          path: obs-airplay
         if: ${{ runner.os == 'Windows' }}
