@@ -39,7 +39,7 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
       # Windows
       - name: Build and Install coddle
-        run: cd coddle && ./win_build_deploy.sh
+        run: cd coddle && bash win_build_deploy.sh
         if: ${{ runner.os == 'Windows' }}
 
       # MacOS Only
@@ -62,7 +62,7 @@ jobs:
           submodules: true
           path: obs-airplay
       - name: Build obs-airplay plugin
-        run: cd obs-airplay && /usr/bin/coddle
+        run: cd obs-airplay && coddle
 
       # MacOS
       - name: Copy Plugin files
