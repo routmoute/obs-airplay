@@ -41,12 +41,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: coddle-cpp/coddle
+          path: coddle
       - name: Build and Install coddle
-        run: ./build.sh && sudo ./deploy.sh
+        run: cd coddle && ./build.sh && sudo ./deploy.sh
       - name: Checkout OBS repository
         uses: actions/checkout@v4
         with:
           repository: obsproject/obs-studio
+          path: obs-studio
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
