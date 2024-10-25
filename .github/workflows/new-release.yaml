@@ -5,8 +5,8 @@ on:
       - main
       - 'releases/**'
 jobs:
-  build:
-    runs-on: ubuntu:22.04
+  build-linux:
+    runs-on: ubuntu-22.04
     steps:
       - name: install apt requirements
         uses: gerlero/apt-install@v1
