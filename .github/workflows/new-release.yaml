@@ -41,6 +41,11 @@ jobs:
       - name: Build and Install coddle
         run: cd coddle && ./win_build_deploy.sh
         if: ${{ runner.os == 'Windows' }}
+      - name: Upload test Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test
+          path: coddle
 
       # MacOS Only
       - name: Get Installed OBS Version
