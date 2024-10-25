@@ -19,7 +19,7 @@ jobs:
         uses: ConorMacBride/install-package@v1
         with:
           # Linux
-          apt: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+          apt: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev libunwind-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
           # MacOS
           brew: fdk-aac ffmpeg libplist openssl
           brew-cask: obs
