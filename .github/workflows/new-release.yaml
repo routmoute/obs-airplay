@@ -62,7 +62,7 @@ jobs:
       # Linux
       - name: Get Installed OBS Version
         id: obs-linux-version
-        uses: dangmai/get-apt-package-version@v1
+        uses: dangmai/get-apt-package-version@v1.3.0
         with:
           package: libobs-dev
         if: ${{ runner.os == 'Linux' }}
