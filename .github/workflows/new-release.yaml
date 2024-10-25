@@ -15,12 +15,14 @@ jobs:
           cache: false
       - name: install coddle
         run: |
-          git clone https://github.com/coddle-cpp/coddle.git && cd coddle && ./build.sh
+          git clone https://github.com/coddle-cpp/coddle.git
+          cd coddle
+          ./build.sh
           sudo ./deploy.sh
-          cd ..
-          ls -la
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: build
-        run: coddle && ls -la
+        run: coddle
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
