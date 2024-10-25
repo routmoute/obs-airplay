@@ -70,5 +70,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: obs-airplay_OBS-${{ steps.obs-linux-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
-          path: obs-airplay.so
+          path: obs-airplay/obs-airplay.so
         if: ${{ runner.os == 'Linux' }}
