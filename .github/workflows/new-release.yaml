@@ -36,7 +36,8 @@ jobs:
       - name: Install dependencies
         uses: ConorMacBride/install-package@v1
         with:
-          brew: fdk-aac ffmpeg libplist openssl obs
+          brew: fdk-aac ffmpeg libplist openssl
+          brew-cask: obs
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
@@ -44,10 +45,14 @@ jobs:
           path: coddle
       - name: Build and Install coddle
         run: cd coddle && ./build.sh && sudo ./deploy.sh
+      - name: Get Installed OBS Version
+        id: obs-version
+        run: echo "version=$(curl -s https://formulae.brew.sh/api/cask/obs.json | jq -r .version)" >> $GITHUB_OUTPUT
       - name: Checkout OBS repository
         uses: actions/checkout@v4
         with:
           repository: obsproject/obs-studio
+          ref: ${{ steps.obs-version.outputs.version }}
           path: obs-studio
       - name: Checkout this repository
         uses: actions/checkout@v4
@@ -59,5 +64,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: obs-airplay_${{ runner.os }}-${{ runner.arch }}
+          name: obs-airplay_OBS-${{ steps.obs-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
           path: obs-airplay/resources/macos/obs-airplay.plugin
