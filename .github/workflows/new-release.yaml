@@ -52,6 +52,9 @@ jobs:
         run: cd obs-airplay && coddle
 
       # MacOS
+      - name: Copy files in Plugin directory
+        run: cp -r $(realpath obs-airplay.dylib) obs-airplay/resources/macos/obs-airplay.plugin/Contents/MacOS/obs-airplay
+        if: ${{ runner.os == 'macOS' }}
       - name: Upload MacOS Artifact
         uses: actions/upload-artifact@v4
         with:
