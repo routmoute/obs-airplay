@@ -60,7 +60,9 @@ jobs:
           submodules: true
           path: obs-airplay
       - name: Build obs-airplay plugin
-        run: cd obs-airplay && coddle
+        run: |
+          cd obs-airplay
+          coddle
 
       # MacOS
       - name: Copy Plugin files
