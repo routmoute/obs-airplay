@@ -33,11 +33,16 @@ jobs:
           path: coddle
       # MacOS and Linux
       - name: Build and Install coddle
-        run: cd coddle && ./build.sh && sudo ./deploy.sh
+        run: |
+          cd coddle
+          ./build.sh
+          sudo ./deploy.sh
         if: ${{ runner.os != 'Windows' }}
       # Windows
       - name: Build and Install coddle
-        run: cd coddle && bash win_build_deploy.sh
+        run: |
+          cd coddle
+          bash win_build_deploy.sh
         if: ${{ runner.os == 'Windows' }}
 
       # MacOS Only
