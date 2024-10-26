@@ -1,0 +1,3 @@
+shared=true
+ldflags="-ldns_sd"
+localRepository="coddle-repo"
