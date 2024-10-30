@@ -42,7 +42,7 @@ jobs:
       - name: Build and Install coddle
         run: |
           cd coddle
-          bash win_build_deploy.sh
+          ./win_build_deploy.sh
         if: ${{ runner.os == 'Windows' }}
 
       # MacOS Only
