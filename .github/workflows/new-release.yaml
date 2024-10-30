@@ -109,14 +109,14 @@ jobs:
       - name: Build and Install coddle
         run: |
           cd coddle
-          sh -c "./win_build_deploy.sh"
+          C:\msys64\msys2.exe -c "./win_build_deploy.sh"
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
           submodules: true
           path: obs-airplay
       - name: Build obs-airplay plugin
-        run: cd obs-airplay && sh -c "coddle"
+        run: cd obs-airplay && C:\msys64\msys2.exe -c "coddle"
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
