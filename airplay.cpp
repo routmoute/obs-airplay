@@ -158,7 +158,7 @@ auto AirPlay::start_raop_server(std::vector<char> hw_addr,
   raop_cbs.audio_set_metadata = audio_set_metadata;
 
   /* set max number of connections = 2 */
-  raop = raop_init(2, &raop_cbs);
+  raop = raop_init(&raop_cbs);
   if (raop == NULL)
   {
     LOG("Error initializing raop!");
@@ -186,14 +186,14 @@ auto AirPlay::start_raop_server(std::vector<char> hw_addr,
   raop_set_udp_ports(raop, udp);
 
   raop_set_log_callback(raop, log_callback, NULL);
-  raop_set_log_level(raop, debug_log ? RAOP_LOG_DEBUG : LOGGER_INFO);
+  raop_set_log_level(raop, debug_log ? LOGGER_DEBUG : LOGGER_INFO);
 
   unsigned short port = raop_get_port(raop);
   raop_start(raop, &port);
   raop_set_port(raop, port);
 
   int error;
-  dnssd = dnssd_init(name.c_str(), strlen(name.c_str()), hw_addr.data(), hw_addr.size(), &error);
+  dnssd = dnssd_init(name.c_str(), strlen(name.c_str()), hw_addr.data(), hw_addr.size(), &error, 0);
   if (error)
   {
     LOG("Could not initialize dnssd library!");
@@ -267,7 +267,7 @@ auto AirPlay::audio_process(void *cls, raop_ntp_t * /*ntp*/, audio_decode_struct
   self->render(data);
 }
 
-auto AirPlay::video_process(void *cls, raop_ntp_t * /*ntp*/, h264_decode_struct *data) -> void
+auto AirPlay::video_process(void *cls, raop_ntp_t * /*ntp*/, video_decode_struct *data) -> void
 {
   auto self = static_cast<AirPlay *>(cls);
   self->render(data);
@@ -457,7 +457,7 @@ AirPlay::AirPlay(struct obs_data *obsData, struct obs_source *obsSource)
   compression_type = 0;
 }
 
-auto AirPlay::render(const h264_decode_struct *pkt) -> void
+auto AirPlay::render(const video_decode_struct *pkt) -> void
 {
   if (!obsSource)
     return;
@@ -481,7 +481,7 @@ auto AirPlay::render(const h264_decode_struct *pkt) -> void
   }
 
   // set current time in ns
-  obsVFrame->timestamp = pkt->pts * 1'000;
+  obsVFrame->timestamp = pkt->ntp_time_local * 1'000;
   obs_source_output_video(obsSource, obsVFrame.get());
 }
 
@@ -521,6 +521,6 @@ auto AirPlay::render(const audio_decode_struct *pkt) -> void
   obsAFrame->speakers = aFrame->speakers;
   obsAFrame->samples_per_sec = aFrame->sampleRate;
   // set current time in ns
-  obsAFrame->timestamp = pkt->ntp_time * 1'000;
+  obsAFrame->timestamp = pkt->ntp_time_local * 1'000;
   obs_source_output_audio(obsSource, obsAFrame.get());
 }

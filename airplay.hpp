@@ -1,6 +1,6 @@
 #pragma once
 #include "audio-decoder.hpp"
-#include "h264-decoder.hpp"
+#include "video-decoder.hpp"
 #include <memory>
 #include <stream.h>
 #include <vector>
@@ -16,7 +16,7 @@ public:
 
 private:
   auto render(const audio_decode_struct *data) -> void;
-  auto render(const h264_decode_struct *data) -> void;
+  auto render(const video_decode_struct *data) -> void;
   auto start_raop_server(std::vector<char> hw_addr,
                          std::string name,
                          unsigned short tcp[3],
@@ -41,7 +41,7 @@ private:
   static auto conn_teardown(void *cls, bool *teardown_96, bool *teardown_110) -> void;
   static auto log_callback(void *cls, int level, const char *msg) -> void;
   static auto video_flush(void *cls) -> void;
-  static auto video_process(void *cls, struct raop_ntp_s *ntp, h264_decode_struct *data) -> void;
+  static auto video_process(void *cls, struct raop_ntp_s *ntp, video_decode_struct *data) -> void;
   static auto video_report_size(void *cls,
                                 float *width_source,
                                 float *height_source,

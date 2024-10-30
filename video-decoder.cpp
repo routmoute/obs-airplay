@@ -1,4 +1,4 @@
-#include "h264-decoder.hpp"
+#include "video-decoder.hpp"
 #include <log/log.hpp>
 #include <stdexcept>
 
