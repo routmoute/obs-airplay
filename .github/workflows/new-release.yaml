@@ -25,7 +25,7 @@ jobs:
           brew: fdk-aac ffmpeg libplist openssl
           brew-cask: obs
           # Windows
-          choco: msys2 clang
+          choco: msys2 llvm
 
       # All OS
       - name: Checkout Coddle repository
