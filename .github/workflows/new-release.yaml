@@ -29,7 +29,7 @@ jobs:
 
       # Windows pacman deps
       - name: Windows dependencies
-        run: pacman -Syu mingw-w64-x86_64-clang mingw-w64-x86_64-libplist
+        run: sh -c "pacman -Syu mingw-w64-x86_64-clang mingw-w64-x86_64-libplist"
         if: ${{ runner.os == 'Windows' }}
 
       # All OS
