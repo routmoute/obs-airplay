@@ -25,7 +25,12 @@ jobs:
           brew: fdk-aac ffmpeg libplist openssl
           brew-cask: obs
           # Windows
-          choco: msys2 llvm
+          choco: msys
+
+      # Windows pacman deps
+      - name: Windows dependencies
+        run: pacman -Syu mingw-w64-x86_64-clang mingw-w64-x86_64-libplist
+        if: ${{ runner.os != 'Windows' }}
 
       # All OS
       - name: Checkout Coddle repository
