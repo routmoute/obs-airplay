@@ -5,67 +5,97 @@ on:
       - main
       - 'releases/**'
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        #os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
-        os: [windows-latest]
+  build-linux:
+    runs-on: ubuntu-latest
     steps:
-      - name: Fix macos-13 brew error
-        run: rm /usr/local/bin/idle3 || true
-        if: ${{ matrix.os == 'macos-13' }}
-
       - name: Install dependencies
-        uses: ConorMacBride/install-package@v1
+        uses: amitie10g/install-package@v1
         with:
-          # Linux
           apt: clang pkg-config libssl-dev libswscale-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev git libobs-dev libavahi-compat-libdnssd-dev libplist-dev libfdk-aac-dev
-          # MacOS
-          brew: fdk-aac ffmpeg libplist openssl
-          brew-cask: obs
-          # Windows
-          choco: msys2
-
-      # Windows pacman deps
-      - name: Windows dependencies
-        run: sh -c "pacman -Syu mingw-w64-x86_64-clang mingw-w64-x86_64-libplist"
-        if: ${{ runner.os == 'Windows' }}
-
-      # All OS
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
           repository: coddle-cpp/coddle
           path: coddle
-      # MacOS and Linux
       - name: Build and Install coddle
         run: |
           cd coddle
           ./build.sh
           sudo ./deploy.sh
-        if: ${{ runner.os != 'Windows' }}
-      # Windows
+      - name: Get Installed OBS Version
+        id: obs-linux-version
+        uses: dangmai/get-apt-package-version@v1.3.0
+        with:
+          package: libobs-dev
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obs-airplay_OBS-${{ steps.obs-linux-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
+          path: obs-airplay/obs-airplay.so
+
+  build-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-13, macos-latest]
+    steps:
+      - name: Fix macos-13 brew error
+        run: rm /usr/local/bin/idle3 || true
+        if: ${{ matrix.os == 'macos-13' }}
+      - name: Install dependencies
+        uses: amitie10g/install-package@v1
+        with:
+          brew: fdk-aac ffmpeg libplist openssl
+          brew-cask: obs
+      - name: Checkout Coddle repository
+        uses: actions/checkout@v4
+        with:
+          repository: coddle-cpp/coddle
+          path: coddle
       - name: Build and Install coddle
         run: |
           cd coddle
-          sh -c "./win_build_deploy.sh"
-        if: ${{ runner.os == 'Windows' }}
-
-      # MacOS Only
+          ./build.sh
+          sudo ./deploy.sh
       - name: Get Installed OBS Version
         id: obs-mac-version
         run: echo "version=$(curl -s https://formulae.brew.sh/api/cask/obs.json | jq -r .version)" >> $GITHUB_OUTPUT
-        if: ${{ runner.os == 'macOS' }}
       - name: Checkout OBS repository
         uses: actions/checkout@v4
         with:
           repository: obsproject/obs-studio
           ref: ${{ steps.obs-mac-version.outputs.version }}
           path: obs-studio
-        if: ${{ runner.os == 'macOS' }}
+      - name: Copy Plugin files
+        run: |
+          mkdir obs-airplay-plugin
+          cp -R obs-airplay/resources/macos/obs-airplay.plugin obs-airplay-plugin/.
+          mkdir obs-airplay-plugin/obs-airplay.plugin/Contents/MacOS
+          cp -R $(realpath obs-airplay/obs-airplay.dylib) obs-airplay-plugin/obs-airplay.plugin/Contents/MacOS/obs-airplay
+      - name: Upload MacOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obs-airplay_OBS-${{ steps.obs-mac-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
+          path: obs-airplay-plugin
 
-      # All OS
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Install dependencies
+        uses: amitie10g/install-package@v1
+        with:
+          msystem: clang64
+          update-msys2: true
+          pacman: mingw-w64-x86_64-clang mingw-w64-x86_64-libplist
+      - name: Checkout Coddle repository
+        uses: actions/checkout@v4
+        with:
+          repository: coddle-cpp/coddle
+          path: coddle
+      - name: Build and Install coddle
+        run: |
+          cd coddle
+          sh -c "./win_build_deploy.sh"
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
@@ -75,40 +105,8 @@ jobs:
         run: |
           cd obs-airplay
           sh -c "coddle"
-
-      # MacOS
-      - name: Copy Plugin files
-        run: |
-          mkdir obs-airplay-plugin
-          cp -R obs-airplay/resources/macos/obs-airplay.plugin obs-airplay-plugin/.
-          mkdir obs-airplay-plugin/obs-airplay.plugin/Contents/MacOS
-          cp -R $(realpath obs-airplay/obs-airplay.dylib) obs-airplay-plugin/obs-airplay.plugin/Contents/MacOS/obs-airplay
-        if: ${{ runner.os == 'macOS' }}
-      - name: Upload MacOS Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: obs-airplay_OBS-${{ steps.obs-mac-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
-          path: obs-airplay-plugin
-        if: ${{ runner.os == 'macOS' }}
-
-      # Linux
-      - name: Get Installed OBS Version
-        id: obs-linux-version
-        uses: dangmai/get-apt-package-version@v1.3.0
-        with:
-          package: libobs-dev
-        if: ${{ runner.os == 'Linux' }}
-      - name: Upload Linux Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: obs-airplay_OBS-${{ steps.obs-linux-version.outputs.version }}_${{ runner.os }}-${{ runner.arch }}
-          path: obs-airplay/obs-airplay.so
-        if: ${{ runner.os == 'Linux' }}
-
-      # Windows
-      - name: Upload Windows Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: obs-airplay_${{ runner.os }}-${{ runner.arch }}
           path: obs-airplay
-        if: ${{ runner.os == 'Windows' }}
