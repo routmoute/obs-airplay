@@ -1,2 +1,4 @@
 winmain=true
 remoteVersion="win"
+cc="/mingw64/bin/clang.exe"
+cxx="/mingw64/bin/clang++.exe"
