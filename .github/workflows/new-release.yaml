@@ -107,14 +107,14 @@ jobs:
           repository: coddle-cpp/coddle
           path: coddle
       - name: Build and Install coddle
-        run: mingw64 -c "cd coddle && ./win_build_deploy.sh"
+        run: msys2 -c "cd coddle && ./win_build_deploy.sh"
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
           submodules: true
           path: obs-airplay
       - name: Build obs-airplay plugin
-        run: mingw64 -c "cd obs-airplay && coddle"
+        run: msys2 -c "cd obs-airplay && coddle"
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
