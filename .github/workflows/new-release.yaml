@@ -25,7 +25,7 @@ jobs:
           brew: fdk-aac ffmpeg libplist openssl
           brew-cask: obs
           # Windows
-          choco: msys
+          choco: msys2
 
       # Windows pacman deps
       - name: Windows dependencies
