@@ -44,7 +44,7 @@ jobs:
       - name: Build and Install coddle
         run: |
           cd coddle
-          sh -c "./win_build_deploy.sh > win_coddle_deploy.txt"
+          sh -c "./win_build_deploy.sh"
         if: ${{ runner.os == 'Windows' }}
 
       # MacOS Only
@@ -69,7 +69,7 @@ jobs:
       - name: Build obs-airplay plugin
         run: |
           cd obs-airplay
-          sh -c "coddle > win_build_obs.txt"
+          sh -c "coddle"
 
       # MacOS
       - name: Copy Plugin files
