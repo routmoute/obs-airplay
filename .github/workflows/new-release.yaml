@@ -100,7 +100,7 @@ jobs:
         with:
           msystem: clang64
           update-msys2: true
-          pacman: mingw-w64-clang-x86_64-toolchain mingw-w64-clang-x86_64-fdk-aac mingw-w64-clang-x86_64-ffmpeg mingw-w64-clang-x86_64-libplist
+          pacman: git mingw-w64-clang-x86_64-toolchain mingw-w64-clang-x86_64-fdk-aac mingw-w64-clang-x86_64-ffmpeg mingw-w64-clang-x86_64-libplist
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
