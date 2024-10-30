@@ -98,23 +98,23 @@ jobs:
       - name: Install dependencies
         uses: amitie10g/install-package@v1
         with:
-          msystem: clang64
+          msystem: mingw64
           update-msys2: true
-          pacman: git mingw-w64-clang-x86_64-toolchain mingw-w64-clang-x86_64-fdk-aac mingw-w64-clang-x86_64-ffmpeg mingw-w64-clang-x86_64-libplist
+          pacman: git mingw-w64-x86_64-toolchain mingw-w64-x86_64-clang mingw-w64-x86_64-fdk-aac mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-libplist
       - name: Checkout Coddle repository
         uses: actions/checkout@v4
         with:
           repository: coddle-cpp/coddle
           path: coddle
       - name: Build and Install coddle
-        run: msys2 -c "cd coddle && ./win_build_deploy.sh"
+        run: mingw64 -c "cd coddle && ./win_build_deploy.sh"
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
           submodules: true
           path: obs-airplay
       - name: Build obs-airplay plugin
-        run: msys2 -c "cd obs-airplay && coddle"
+        run: mingw64 -c "cd obs-airplay && coddle"
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
