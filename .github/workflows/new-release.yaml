@@ -98,6 +98,7 @@ jobs:
       - name: Install dependencies
         uses: amitie10g/install-package@v1
         with:
+          choco: bonjour
           msystem: mingw64
           update-msys2: true
           pacman: git mingw-w64-x86_64-toolchain mingw-w64-x86_64-clang mingw-w64-x86_64-fdk-aac mingw-w64-x86_64-ffmpeg mingw-w64-x86_64-libplist
